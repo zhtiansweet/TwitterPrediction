@@ -1,13 +1,10 @@
 
 __author__ = 'tianzhang'
 
-from sklearn import linear_model
 from sklearn import metrics
 from sklearn.tree import DecisionTreeRegressor
 import numpy as np
-from sklearn.externals.six import StringIO
 from sklearn import tree
-import os
 
 
 # load training data
@@ -37,12 +34,11 @@ def transform_features(x):
     return np.log(1+x)
 
 X_train = transform_features(X_train_A) - transform_features(X_train_B)
-model = DecisionTreeRegressor(max_depth=6)
+model = DecisionTreeRegressor(max_depth=4, min_samples_leaf=1)
 model.fit(X_train,y_train)
 
 with open("iris.dot", 'w') as f:
     f = tree.export_graphviz(model, out_file=f)
-#os.unlink('iris.dot')
 
 # compute AuC score on the training data
 p_train = model.predict(X_train)

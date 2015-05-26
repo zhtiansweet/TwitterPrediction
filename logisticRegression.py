@@ -1,4 +1,3 @@
-
 __author__ = 'tianzhang'
 
 from sklearn import linear_model
@@ -15,7 +14,6 @@ X_train_A = []
 X_train_B = []
 
 for line in trainfile:
-    #print line
     splitted = line.rstrip().split(',')
     label = int(splitted[0])
     A_features = [float(item) for item in splitted[1:12]]
@@ -66,12 +64,10 @@ X_test = transform_features(X_test_A) - transform_features(X_test_B)
 # compute probabilistic predictions
 p_test = model.predict_proba(X_test)
 #only need the probability of the 1 class
-
 p_test = p_test[:,1:2]
-#print p_test
 
 # write predictions
-predfile = open('predict_sample.csv','w+')
+predfile = open('predict_logisticRegression.csv','w+')
 
 print >>predfile, "Id,Choice"
 i=1
