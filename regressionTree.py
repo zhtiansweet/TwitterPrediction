@@ -34,7 +34,11 @@ def transform_features(x):
     return np.log(1+x)
 
 X_train = transform_features(X_train_A) - transform_features(X_train_B)
-model = DecisionTreeRegressor(max_depth=4, min_samples_leaf=1)
+X_train = np.append(X_train, transform_features(X_train_A), axis=1)
+X_train = np.append(X_train, transform_features(X_train_B), axis=1)
+#X_train = np.append(transform_features(X_train_A), transform_features(X_train_B), axis=1)
+
+model = DecisionTreeRegressor(max_depth=5, min_samples_leaf=1)
 model.fit(X_train,y_train)
 
 with open("iris.dot", 'w') as f:
@@ -65,6 +69,9 @@ X_test_B = np.array(X_test_B)
 
 # transform features in the same way as for training to ensure consistency
 X_test = transform_features(X_test_A) - transform_features(X_test_B)
+X_test = np.append(X_test, transform_features(X_test_A), axis=1)
+X_test = np.append(X_test, transform_features(X_test_B), axis=1)
+#X_test = np.append(transform_features(X_test_A), transform_features(X_test_B), axis=1)
 # compute probabilistic predictions
 p_test = model.predict(X_test)
 

@@ -1,7 +1,10 @@
 __author__ = 'tianzhang'
 
-from sklearn import linear_model
+
+__author__ = 'tianzhang'
+
 from sklearn import metrics
+from sklearn import ensemble
 import numpy as np
 
 
@@ -31,17 +34,19 @@ X_train_B = np.array(X_train_B)
 def transform_features(x):
     return np.log(1+x)
 
-X_train = transform_features(X_train_A) - transform_features(X_train_B)
+#X_train = transform_features(X_train_A) - transform_features(X_train_B)
 #X_train = np.append(X_train, transform_features(X_train_A), axis=1)
 #X_train = np.append(X_train, transform_features(X_train_B), axis=1)
 X_train = np.append(transform_features(X_train_A), transform_features(X_train_B), axis=1)
+#print X_train
 
-model = linear_model.LogisticRegression(fit_intercept=False)
+model = ensemble.GradientBoostingClassifier(n_estimators=110, max_depth=3)
 model.fit(X_train,y_train)
 
 # compute AuC score on the training data
 p_train = model.predict_proba(X_train)
 p_train = p_train[:,1:2]
+#print p_train
 fpr, tpr, thresholds = metrics.roc_curve(y_train, p_train, pos_label=1)
 auc = metrics.auc(fpr,tpr)
 print 'AuC score on training data:',auc
@@ -64,23 +69,22 @@ X_test_A = np.array(X_test_A)
 X_test_B = np.array(X_test_B)
 
 # transform features in the same way as for training to ensure consistency
-X_test = transform_features(X_test_A) - transform_features(X_test_B)
+#X_test = transform_features(X_test_A) - transform_features(X_test_B)
 #X_test = np.append(X_test, transform_features(X_test_A), axis=1)
 #X_test = np.append(X_test, transform_features(X_test_B), axis=1)
 X_test = np.append(transform_features(X_test_A), transform_features(X_test_B), axis=1)
-
+#print X_test
 # compute probabilistic predictions
 p_test = model.predict_proba(X_test)
-#only need the probability of the 1 class
 p_test = p_test[:,1:2]
 
 # write predictions
-predfile = open('predict_logisticRegression.csv','w+')
+predfile = open('predict_gradientBoosting.csv','w+')
 
 print >>predfile, "Id,Choice"
 i=1
 for line in p_test:
-    print >>predfile, str(i)+','+','.join([str(item) for item in line])
+    print >>predfile, str(i)+','+str(line[0])
     i+=1
 
 predfile.close()
